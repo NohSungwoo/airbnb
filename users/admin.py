@@ -10,29 +10,20 @@ class CustomUserAdmin(UserAdmin):
         (
             "Profile",
             {
-                "fields": ("username", "password", "name", "email", "is_host"),
+                "fields": (
+                    "profile_photo",
+                    "name",
+                    "password",
+                    "is_host",
+                    "gender",
+                    "language",
+                    "currency",
+                ),
                 "classes": ("wide",),
             },
         ),
-        (
-            "Permissions",
-            {
-                "fields": (
-                    "is_active",
-                    "is_staff",
-                    "is_superuser",
-                    "groups",
-                    "user_permissions",
-                ),
-                "classes": ("collapse",),
-            },
-        ),
-        (
-            "Important dates",
-            {
-                "fields": ("last_login", "date_joined"),
-                "classes": ("collapse",),
-            },
-        ),
     )
-    list_display = ("username", "email", "name", "is_host")
+    list_display = (
+        "name",
+        "is_host",
+    )

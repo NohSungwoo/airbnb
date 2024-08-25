@@ -9,8 +9,10 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "3.12.3"
 django = "^5.1"
-black = "^24.8.0"
+black = {extras = ["d"], version = "^24.8.0"}
 isort = "^5.13.2"
+pillow = "^10.4.0"
+
 [tool.isort]
 profile = "black"
 
