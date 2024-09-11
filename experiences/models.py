@@ -24,7 +24,7 @@ class Experience(CommonModel):
         related_name="experiences",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     def __str__(self):

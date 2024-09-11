@@ -1,6 +1,9 @@
+from unicodedata import category
+
 from django.urls import path
-from .views import categories
+from .views import Categories, CategoryDetail
 
 urlpatterns = [
-    path("", categories),
+    path("", Categories.as_view()),
+    path("<int:pk>", CategoryDetail.as_view()),
 ]
