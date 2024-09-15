@@ -1,6 +1,7 @@
 from unicodedata import category
 
 from django.urls import path
+
 from .views import CategoryViewSet
 
 urlpatterns = [

@@ -1,9 +1,10 @@
 from gc import get_objects
 
-from rest_framework.exceptions import NotFound
-from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Perk
 from .serializers import PerkSerializer
 
@@ -31,7 +32,7 @@ class Perks(APIView):
 
 class PerkDetail(APIView):
 
-    def get_object(self, request, pk):
+    def get_object(self, pk):
         try:
             return Perk.objects.get(pk=pk)
         except Perk.DoesNotExist:
@@ -54,11 +55,12 @@ class PerkDetail(APIView):
 
         updated_perk = serializer.save()
 
-        return Response(PerkSerializer(updated_perk).data, status=status.HTTP_201_CREATED)
+        return Response(
+            PerkSerializer(updated_perk).data, status=status.HTTP_201_CREATED
+        )
 
     def delete(self, request, pk):
         perk = self.get_object(pk)
         perk.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-

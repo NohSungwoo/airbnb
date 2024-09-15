@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import Perks, PerkDetail
 
+from .views import PerkDetail, Perks
 
 urlpatterns = [
     path("perks/", Perks.as_view()),

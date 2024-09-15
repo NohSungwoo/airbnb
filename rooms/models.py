@@ -1,3 +1,5 @@
+from itertools import count
+
 from django.db import models
 
 from common.models import CommonModel
@@ -37,8 +39,22 @@ class Room(CommonModel):
         related_name="rooms",
     )
 
-    def __str__(self):
-        return self.name
+    def __str__(room):
+        return room.name
+
+    def total_amenities(room):
+        return room.amenities.count()
+
+    def rating(room):
+        count = room.reviews.count()
+        if count == 0:
+            return 0
+
+        else:
+            total_rating = 0
+            for review in room.reviews.all().values("rating"):
+                total_rating += review["rating"]
+            return round(total_rating / count, 2)
 
 
 class Amenity(CommonModel):
