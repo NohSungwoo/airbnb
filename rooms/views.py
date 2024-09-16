@@ -1,9 +1,6 @@
-from unicodedata import category
-
 from django.db import transaction
 from rest_framework import status
 from rest_framework.exceptions import (
-    NotAuthenticated,
     NotFound,
     ParseError,
     PermissionDenied,
@@ -20,6 +17,7 @@ from rooms.serializers import (
     RoomListSerializer,
 )
 from medias.serializers import PhotoSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class Amenities(APIView):
@@ -73,6 +71,8 @@ class AmenityDetail(APIView):
 
 class Rooms(APIView):
 
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
     def get(self, request):
         all_rooms = Room.objects.all()
 
@@ -83,8 +83,6 @@ class Rooms(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        if not request.user.is_authenticated:
-            raise NotAuthenticated
 
         serializer = RoomDetailSerializer(data=request.data)
         category_id = request.data.get("categories")
@@ -120,9 +118,12 @@ class Rooms(APIView):
 
 class RoomDetail(APIView):
 
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
     def get_object(self, pk):
         try:
             return Room.objects.get(pk=pk)
+
         except Room.DoesNotExist:
             raise NotFound
 
@@ -134,10 +135,6 @@ class RoomDetail(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk):
-        # 유저 인증
-        if not request.user.is_authenticated:
-            raise NotAuthenticated
-
         try:
             room = self.get_object(pk)
 
@@ -180,9 +177,6 @@ class RoomDetail(APIView):
             return Response(RoomDetailSerializer(updated_room).data)
 
     def delete(self, request, pk):
-        if not request.user.is_authenticated:
-            raise NotAuthenticated
-
         room = self.get_object(pk)
 
         if request.user != room.owner:
@@ -194,6 +188,8 @@ class RoomDetail(APIView):
 
 
 class RoomReviews(APIView):
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_object(self, pk):
         try:
@@ -222,6 +218,22 @@ class RoomReviews(APIView):
         serializer = ReviewSerializer(reviews, many=True)
 
         return Response(serializer.data)
+
+    def post(self, request, pk):
+
+        serializer = ReviewSerializer(data=request.data)
+        room = self.get_object(pk)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+
+        review = serializer.save(user=request.user, room=room)
+
+        serializer = ReviewSerializer(review)
+
+        return Response(serializer.data)
+
+
 
 
 class RoomAmenities(APIView):
@@ -257,6 +269,8 @@ class RoomAmenities(APIView):
 
 class RoomPhotos(APIView):
 
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
     def get_object(self, pk):
         try:
             return Room.objects.get(pk=pk)
@@ -265,8 +279,6 @@ class RoomPhotos(APIView):
             raise NotFound("Room DoesNotExist")
 
     def post(self, request, pk):
-        if not request.user.is_authenticated:
-            raise NotAuthenticated
 
         room = self.get_object(pk)
 
