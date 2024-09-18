@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.exceptions import (
     NotFound,
@@ -8,6 +9,7 @@ from rest_framework.exceptions import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from bookings.models import Booking
 from categories.models import Category
 from reviews.serializers import ReviewSerializer
 from rooms.models import Amenity, Room
@@ -16,6 +18,7 @@ from rooms.serializers import (
     RoomDetailSerializer,
     RoomListSerializer,
 )
+from bookings.serializers import PublicBookingSerializer, CreateRoomBookingSerializer
 from medias.serializers import PhotoSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
@@ -234,8 +237,6 @@ class RoomReviews(APIView):
         return Response(serializer.data)
 
 
-
-
 class RoomAmenities(APIView):
 
     def get_object(self, pk):
@@ -296,5 +297,45 @@ class RoomPhotos(APIView):
         photo = serializer.save(room=room)
 
         serializer = PhotoSerializer(photo)
+
+        return Response(serializer.data)
+
+
+class RoomBookings(APIView):
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+
+        except Room.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        room = self.get_object(pk)
+        now = timezone.localtime(timezone.now()).date()
+        bookings = Booking.objects.filter(
+            room=room, kind=Booking.BookingKindChoices.ROOM, check_in__gt=now
+        )
+
+        serializer = PublicBookingSerializer(bookings, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request, pk):
+        user = request.user
+        room = self.get_object(pk)
+        serializer = CreateRoomBookingSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+
+        booking = serializer.save(
+            room=room,
+            user=user,
+            kind=Booking.BookingKindChoices.ROOM,
+        )
+        serializer = PublicBookingSerializer(booking)
 
         return Response(serializer.data)

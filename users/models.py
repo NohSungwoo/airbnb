@@ -15,7 +15,7 @@ class User(AbstractUser):
         WON = ("won", "Korean Won")
         USD = ("usd", "Dollar")
 
-    profile_photo = models.ImageField(
+    profile_photo = models.URLField(
         blank=True,
         null=True,
     )
