@@ -34,3 +34,19 @@ class ExperienceSerializer(serializers.ModelSerializer):
             "category",
             "perks",
         )
+
+
+class TinyExperienceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Experience
+        fields = (
+            "pk",
+            "country",
+            "city",
+            "name",
+            "price",
+            "address",
+            "start",
+            "end",
+        )
