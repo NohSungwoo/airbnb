@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from bookings.models import Booking
 from bookings.serializers import ExperienceBookingSerializer
 from categories.models import Category
 from .models import Perk, Experience
@@ -165,6 +166,53 @@ class ExperienceBookings(APIView):
         serializer = ExperienceBookingSerializer(experience)
 
         return Response(serializer.data)
+
+
+class ExperienceBookingDetail(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_experience(self, pk):
+        try:
+            return Experience.objects.get(pk=pk)
+
+        except Experience.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk, booking_pk):
+
+        experience = self.get_experience(pk)
+
+        booking = experience.bookings.get(pk=booking_pk)
+
+        serializer = ExperienceBookingSerializer(booking)
+
+        return Response(serializer.data)
+
+    def put(self, request, pk, booking_pk):
+
+        experience = self.get_experience(pk)
+        booking = experience.bookings.get(pk=booking_pk)
+
+        serializer = ExperienceBookingSerializer(booking, data=request.data, partial=True)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+
+        booking = serializer.save()
+
+        serializer = ExperienceSerializer(booking)
+
+        return Response(serializer.data)
+
+    def delete(self, request, pk, booking_pk):
+
+        experience = self.get_experience(pk)
+        booking = experience.bookings.get(pk=booking_pk)
+
+        booking.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class Perks(APIView):

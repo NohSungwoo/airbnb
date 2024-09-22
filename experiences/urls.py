@@ -6,7 +6,7 @@ from .views import (
     Experiences,
     ExperienceDetail,
     ExperiencePerks,
-    ExperienceBookings,
+    ExperienceBookings, ExperienceBookingDetail,
 )
 
 urlpatterns = [
@@ -16,4 +16,5 @@ urlpatterns = [
     path("perks/", Perks.as_view()),
     path("perk/<int:pk>/", PerkDetail.as_view()),
     path("<int:pk>/bookings/", ExperienceBookings.as_view()),
+    path("<int:pk>/bookings/<int:booking_pk>", ExperienceBookingDetail.as_view()),
 ]
