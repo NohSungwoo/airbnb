@@ -1,11 +1,12 @@
 from rest_framework import serializers
 
 from categories.serializers import CategorySerializer
+from medias.serializers import PhotoSerializer
 from reviews.serializers import ReviewSerializer
 from rooms.models import Amenity, Room
 from users.serializers import TinyUserSerializer
-from medias.serializers import PhotoSerializer
 from wishlists.models import Wishlist
+
 
 class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,4 +66,3 @@ class RoomDetailSerializer(serializers.ModelSerializer):
     def get_is_like(self, room):
         request = self.context["request"]
         return Wishlist.objects.filter(user=request.user, rooms__id=room.pk).exists()
-

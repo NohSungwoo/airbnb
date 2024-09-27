@@ -4,11 +4,11 @@ from .views import (
     Amenities,
     AmenityDetail,
     RoomAmenities,
+    RoomBookings,
     RoomDetail,
     RoomPhotos,
     RoomReviews,
     Rooms,
-    RoomBookings,
 )
 
 urlpatterns = [

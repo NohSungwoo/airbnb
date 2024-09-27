@@ -3,7 +3,8 @@ from rest_framework import serializers
 from categories.models import Category
 from categories.serializers import CategorySerializer
 from users.serializers import TinyUserSerializer
-from .models import Perk, Experience
+
+from .models import Experience, Perk
 
 
 class PerkSerializer(serializers.ModelSerializer):

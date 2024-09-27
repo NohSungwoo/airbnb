@@ -1,12 +1,13 @@
 from django.urls import path
 
 from .views import (
-    PerkDetail,
-    Perks,
-    Experiences,
+    ExperienceBookingDetail,
+    ExperienceBookings,
     ExperienceDetail,
     ExperiencePerks,
-    ExperienceBookings, ExperienceBookingDetail,
+    Experiences,
+    PerkDetail,
+    Perks,
 )
 
 urlpatterns = [

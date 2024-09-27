@@ -1,12 +1,13 @@
+from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from rooms.models import Room
 from wishlists.models import Wishlist
 from wishlists.serializers import WishlistSerializer
-from rest_framework import status
+
 
 class Wishlists(APIView):
 
@@ -68,7 +69,6 @@ class WishlistDetail(APIView):
         serializer = WishlistSerializer(wishlist, context={"request": request})
 
         return Response(serializer.data)
-
 
     def delete(self, request, pk):
         user = request.user

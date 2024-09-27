@@ -1,16 +1,16 @@
 from django.db import transaction
-
 from rest_framework import status
 from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from bookings.models import Booking
 from bookings.serializers import ExperienceBookingSerializer
 from categories.models import Category
-from .models import Perk, Experience
-from .serializers import PerkSerializer, ExperienceSerializer
+
+from .models import Experience, Perk
+from .serializers import ExperienceSerializer, PerkSerializer
 
 
 class Experiences(APIView):
@@ -19,7 +19,9 @@ class Experiences(APIView):
 
     def get(self, request):
 
-        all_experiences = Experience.objects.filter(category__kind=Category.CategoryKindChoices.EXPERIENCES)
+        all_experiences = Experience.objects.filter(
+            category__kind=Category.CategoryKindChoices.EXPERIENCES
+        )
 
         serializer = ExperienceSerializer(all_experiences, many=True)
 
@@ -36,7 +38,9 @@ class Experiences(APIView):
         host = request.user
 
         try:
-            category = Category.objects.get(kind=Category.CategoryKindChoices.EXPERIENCES)
+            category = Category.objects.get(
+                kind=Category.CategoryKindChoices.EXPERIENCES
+            )
         except Category.DoesNotExist:
             raise ParseError("Category NotFound")
 
@@ -75,7 +79,6 @@ class ExperienceDetail(APIView):
 
         return Response(serializer.data)
 
-
     def put(self, request, pk):
         user = request.user
         experience = self.get_object(pk)
@@ -113,7 +116,6 @@ class ExperienceDetail(APIView):
 
         if user != experience.host:
             raise PermissionDenied
-
 
         experience.delete()
 
@@ -156,7 +158,7 @@ class ExperienceBookings(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors)
         try:
-           experience = Experience.objects.get(pk=pk)
+            experience = Experience.objects.get(pk=pk)
 
         except Experience.DoesNotExist:
             raise NotFound
@@ -194,7 +196,9 @@ class ExperienceBookingDetail(APIView):
         experience = self.get_experience(pk)
         booking = experience.bookings.get(pk=booking_pk)
 
-        serializer = ExperienceBookingSerializer(booking, data=request.data, partial=True)
+        serializer = ExperienceBookingSerializer(
+            booking, data=request.data, partial=True
+        )
 
         if not serializer.is_valid():
             return Response(serializer.errors)

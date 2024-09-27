@@ -1,9 +1,10 @@
-from rest_framework.exceptions import ParseError, NotFound
+from django.contrib.auth import authenticate, login, logout
+from rest_framework import status
+from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from django.contrib.auth import authenticate, login, logout
+
 from .models import User
 from .serializers import PrivateUserSerializer
 
