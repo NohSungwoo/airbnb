@@ -31,10 +31,10 @@ class Amenities(APIView):
         serializer = AmenitySerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         amenity = serializer.save()
-        return Response(AmenitySerializer(amenity), status=status.HTTP_201_CREATED)
+        return Response(AmenitySerializer(amenity).data, status=status.HTTP_201_CREATED)
 
 
 class AmenityDetail(APIView):
@@ -55,7 +55,7 @@ class AmenityDetail(APIView):
         serializer = AmenitySerializer(amenity, data=request.data, partial=True)
 
         if not serializer.is_valid():
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         updated_amenity = serializer.save()
         return Response(
@@ -102,7 +102,7 @@ class Rooms(APIView):
             raise NotFound("Category Not Found")
 
         if not serializer.is_valid():
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         with transaction.atomic():
             room = serializer.save(owner=request.user, categories=category)
